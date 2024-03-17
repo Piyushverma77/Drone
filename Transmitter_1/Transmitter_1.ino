@@ -1,5 +1,14 @@
+//Header Section
   #include <nRF24L01.h>
   #include <RF24.h>
+
+  #include <Adafruit_SSD1306.h>
+
+// Define Section
+  #define OLED_RESET 4  
+
+
+Adafruit_SSD1306 display(OLED_RESET);
 
   RF24 radio(9, 10); 
   
@@ -8,11 +17,29 @@
   bool status=true;
 
 
+//Fuction section
+
+void Setup_display() {
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+}
+
+void display_items(int x,int y,char string[]){
+  display.setCursor(x,y);
+  display.println(string);
+  display.display();
+  display.clearDisplay();
+  delay(2000);
+  display.display();
+}
+
 
 void setup() {
-  Serial.begin(250000);
-  Serial.println("Setup is being Initialized");
-
+  Setup_display();
+  display_items(0,0,"Setup is being Initialized");
   if(!radio.begin()){
     Serial.println("Hardware not connected");
   }
