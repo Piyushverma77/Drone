@@ -1,16 +1,27 @@
 //Header Section
   #include <nRF24L01.h>
   #include <RF24.h>
-
   #include <Adafruit_SSD1306.h>
 
 // Define Section
-  #define OLED_RESET 4  
+  #define OLED_RESET 4
+  #define CE_PIN 9
+  #define CSN_PIN 10  
+
+
+  struct signal{
+    byte throttle;
+    byte pitch;
+    byte roll;
+    byte yaw;
+    byte arm;
+    byte lit;
+  }data;
 
 
 Adafruit_SSD1306 display(OLED_RESET);
 
-  RF24 radio(9, 10); 
+  RF24 radio(CE_PIN,CSN_PIN); 
   
   const byte address[6]= "0007";  
 
@@ -22,7 +33,6 @@ Adafruit_SSD1306 display(OLED_RESET);
 void Setup_display() {
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
-
   display.setTextSize(1);
   display.setTextColor(WHITE);
 }
@@ -36,11 +46,8 @@ void display_items(int x,int y,char string[]){
   display.display();
 }
 
-
-void setup() {
-  Setup_display();
-  display_items(0,0,"Setup is being       Initialized");
-
+void Setup_Radio() {
+//initial radio setup
   if(!radio.begin()){
     display_items(0,0,"Hardware not connected");
   }
@@ -55,7 +62,9 @@ void setup() {
   radio.setPALevel(RF24_PA_MAX);   
   radio.setChannel(108);
 
-  display_items(0,0,"Setup Done");
+}
+
+void radio_status() {
 
 while(status) {
 if (radio.available()) {
@@ -66,13 +75,28 @@ if (radio.available()) {
   status = false;
   delay(1000);
   } 
-  
 } else {
   display_items(0,0,"Pairing");
+    }
+  }
 }
-}
+// SETUP part
+void setup() 
+{
+  Setup_display();
+
+  display_items(0,0,"Setup is being       Initialized");
+
+  Setup_Radio();
+
+  display_items(0,0,"Setup Done");
+
+  radio_status();
 
 }
-void loop() {
+
+//LOOP part
+void loop() 
+{
  
 }
