@@ -32,23 +32,21 @@ void display_items(int x,int y,char string[]){
   display.println(string);
   display.display();
   display.clearDisplay();
-  delay(2000);
+  delay(1000);
   display.display();
 }
 
 
 void setup() {
   Setup_display();
-  display_items(0,0,"Setup is being Initialized");
+  display_items(0,0,"Setup is being       Initialized");
+
   if(!radio.begin()){
-    Serial.println("Hardware not connected");
+    display_items(0,0,"Hardware not connected");
   }
   else {
-    Serial.println("Hardware connected");
+    display_items(0,0,"Hardware connected");
   }
-
-  delay(3000);
- 
   radio.openReadingPipe(1, address);
   radio.startListening();
   radio.setAutoAck(false);
@@ -57,19 +55,20 @@ void setup() {
   radio.setPALevel(RF24_PA_MAX);   
   radio.setChannel(108);
 
-
+  display_items(0,0,"Setup Done");
 
 while(status) {
 if (radio.available()) {
     byte check=100;;
   radio.read(&check,sizeof(check));
   if(check==007){
-     Serial.println("Paired Successful");
+   display_items(0,0,"Paired successfully");
   status = false;
+  delay(1000);
   } 
-  delay(5000);
+  
 } else {
-  Serial.println("Pairing");
+  display_items(0,0,"Pairing");
 }
 }
 
